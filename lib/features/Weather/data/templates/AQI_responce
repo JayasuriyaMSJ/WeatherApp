@@ -1,0 +1,26 @@
+url = api.openweathermap.org/data/2.5/air_pollution?lat=21.6240113&lon=73.0253784&appid={API_key}
+
+{
+  "coord": {
+    "lon": 73.0254,
+    "lat": 21.624
+  },
+  "list": [
+    {
+      "main": {
+        "aqi": 1
+      },
+      "components": {
+        "co": 263.69,
+        "no": 0.22,
+        "no2": 4.84,
+        "o3": 49.35,
+        "so2": 3.49,
+        "pm2_5": 4.55,
+        "pm10": 5.4,
+        "nh3": 0.51
+      },
+      "dt": 1725535622
+    }
+  ]
+}

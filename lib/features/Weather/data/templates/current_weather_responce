@@ -1,0 +1,46 @@
+url : api.openweathermap.org/data/2.5/weather?lat=21.6240113&lon=73.0253784&appid={API_Key} 	
+
+{
+  "coord": {
+    "lon": 73.0254,
+    "lat": 21.624
+  },
+  "weather": [
+    {
+      "id": 804,
+      "main": "Clouds",
+      "description": "overcast clouds",
+      "icon": "04d"
+    }
+  ],
+  "base": "stations",
+  "main": {
+    "temp": 301.82,
+    "feels_like": 307.39,
+    "temp_min": 301.82,
+    "temp_max": 301.82,
+    "pressure": 1002,
+    "humidity": 82,
+    "sea_level": 1002,
+    "grnd_level": 999
+  },
+  "visibility": 7544,
+  "wind": {
+    "speed": 4.83,
+    "deg": 249,
+    "gust": 7.71
+  },
+  "clouds": {
+    "all": 100
+  },
+  "dt": 1725535783,
+  "sys": {
+    "country": "IN",
+    "sunrise": 1725497547,
+    "sunset": 1725542466
+  },
+  "timezone": 19800,
+  "id": 1278553,
+  "name": "Ankleshwar",
+  "cod": 200
+}

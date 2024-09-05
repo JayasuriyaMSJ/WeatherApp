@@ -1,23 +1,34 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:http/http.dart' as http;
 import 'package:intern_weather/core/APIs/api_keys.dart';
+import 'package:intern_weather/core/logs/errors/error_logs.dart';
+import 'package:intern_weather/features/Weather/data/models/aqi_model.dart';
 
 abstract class WeatherApiServices {
   double latitude;
   double longitude;
   String APIKey = ApiKeys.weatherAPIKey;
   WeatherApiServices({required this.latitude, required this.longitude});
-  String AQIService();
+  Future<Either<ErrorLog, void>> AQIService();
 }
 
 class WeatherApiServiceImpl extends WeatherApiServices {
-  
   WeatherApiServiceImpl({
-    required double latitude,
-    required double longitude,
-  }) : super(latitude: latitude, longitude: longitude){}
+    required super.latitude,
+    required super.longitude,
+  });
 
   @override
-  String AQIService() {
-    // TODO: implement AQIService
-    throw UnimplementedError();
+  Future<Either<ErrorLog, String>> AQIService() async {
+    try {
+      final responce = await http.get(Uri.parse(
+          "http://api.openweathermap.org/data/2.5/air_pollution?lat=$latitude&lon=$longitude&appid=${super.APIKey}"));
+      final resBody = responce.body;
+      if (responce.statusCode == 200){
+        return Right("A");
+      }
+    } catch (e) {
+
+    }
   }
 }

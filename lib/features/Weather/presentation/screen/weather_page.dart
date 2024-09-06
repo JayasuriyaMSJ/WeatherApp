@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intern_weather/core/utils/LocationService/location_service.dart';
 import 'package:intern_weather/core/utils/date_time_service.dart';
 import 'package:geocoding/geocoding.dart' as geo;
+import 'package:intern_weather/features/Weather/presentation/bloc/weather_bloc.dart';
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -20,36 +22,75 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    final location = await locationService.getLocationLatLog();
+    setState(() {
+      print("In Wether Page: $location");
+      context.read<WeatherBloc>().add(
+            FetchAqi(
+              latitude: location["Latitude"],
+              longitude: location["Longitude"],
+            ),
+          );
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            // Place Name and
-            loc_wid(context),
-            const Padding(
-              padding: EdgeInsets.all(15.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
+        child: BlocBuilder<WeatherBloc, WeatherState>(
+          builder: (context, state) {
+            if (state is WeatherInitial) {
+              print("Intiaing.............................................");
+              _fetchData();
+            }
+            if (state is WeatherLoading) {
+              print("Loading........................");
+            }
+            if (state is WeatherSuccess) {
+              print("/////////////////////////////////////////////////////");
+              print(state.aqiEntity);
+            }
+            if (state is WeatherFailure) {
+              print("/////////////////////////////////////////////////////");
+
+              print(state.message);
+            }
+            return Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                // Place Name and
+                locwid(context),
+                const Padding(
+                  padding: EdgeInsets.all(15.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("18"),
-                      Text("data"),
+                      Column(
+                        children: [
+                          Text("18"),
+                          Text("data"),
+                        ],
+                      ),
+                      Icon(Icons.telegram)
                     ],
                   ),
-                  Icon(Icons.telegram)
-                ],
-              ),
-            ),
-          ],
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Padding loc_wid(BuildContext context) {
+  Padding locwid(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: Center(

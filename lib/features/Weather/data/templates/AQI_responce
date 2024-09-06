@@ -1,4 +1,4 @@
-url = api.openweathermap.org/data/2.5/air_pollution?lat=21.6240113&lon=73.0253784&appid={API_key}
+// url = api.openweathermap.org/data/2.5/air_pollution?lat=21.6240113&lon=73.0253784&appid={API_key}
 
 {
   "coord": {

@@ -13,19 +13,33 @@ import 'package:intern_weather/features/Weather/presentation/screen/weather_page
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  print("Starting initialization...");
+
   final AppPreference pref = AppPreference();
+  print("Initializing AppPreference...");
+  await pref.init();
+  print("AppPreference initialized.");
+
   final LocationService locationService = LocationService();
+  print("Initializing LocationService...");
+  await locationService.init();
+  print("LocationService initialized.");
+
   final WeatherApiServiceImpl weatherApiServices = WeatherApiServiceImpl(
     apiKey: ApiKeys.weatherAPIKey,
   );
+
   final WeatherRepositoryImpl weatherRepository = WeatherRepositoryImpl(
     weatherAPI: weatherApiServices,
   );
+
   final GetAqi getAqiUseCase = GetAqi(
     weatherRepository,
   );
-  await pref.init();
-  await locationService.init();
+
+  print("Initialization complete. Running the app...");
+
   runApp(MyApp(
     getAqiUseCase: getAqiUseCase,
   ));
@@ -33,27 +47,58 @@ Future<void> main() async {
 
 class MyApp extends StatelessWidget {
   final GetAqi getAqiUseCase;
-  const MyApp({super.key, required this.getAqiUseCase});
+  MyApp({super.key, required this.getAqiUseCase});
   static const keyLoginStatus = "LoggedIn";
   static const keyUserName = "userName";
+  final LocationService locationService = LocationService();
 
   @override
   Widget build(BuildContext context) {
     final AppPreference pref = AppPreference();
     final bool? userIsLoggedIn = pref.getBool(keyLoginStatus);
     final AppTheme appTheme = AppTheme();
+    final position = locationService.getLocationLatLog();
+
+    print("Building MaterialApp...");
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: appTheme.lighttheme,
       darkTheme: appTheme.darktheme,
       themeMode: appTheme.themeMode,
-      home: BlocProvider(
-        create: (_) => WeatherBloc(
-          getAqiUseCase: getAqiUseCase,
-        ),
-        child:
-            userIsLoggedIn == true ? const WeatherPage() : const WelcomePage(),
-      ),
+      home: FutureBuilder(
+          future: position,
+          builder: (context, snap) {
+            if (snap.hasData) {
+              print("Got Data from LocationService : ${snap.data}");
+              // \nLatitude: ${snap.data!['Latitude']}\nLongitude: ${snap.data!['Longitude']}");
+              return BlocProvider<WeatherBloc>(
+                create: (context) => WeatherBloc(
+                  getAqiUseCase: getAqiUseCase,
+                )..add(
+                    FetchAqi(
+                        latitude: snap.data!['Latitude'],
+                        longitude: snap.data!['Longitude']),
+                  ),
+                child: userIsLoggedIn == true
+                    ? const WeatherPage()
+                    : const WelcomePage(),
+              );
+            } else {
+              return Scaffold(
+                body: SafeArea(
+                  child: Center(
+                    child: RichText(
+                      text: TextSpan(
+                        text: "Loading.....",
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+          }),
     );
   }
 }

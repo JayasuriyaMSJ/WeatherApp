@@ -1,4 +1,7 @@
 class ErrorLog {
   final String message;
-  ErrorLog([this.message = "unexpected error Occured"]);
+  ErrorLog(this.message);
+
+  @override
+  String toString() => message;
 }

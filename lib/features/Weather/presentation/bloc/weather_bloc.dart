@@ -12,23 +12,39 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
     required this.getAqiUseCase,
   }) : super(WeatherInitial()) {
     on<FetchAqi>((event, emit) async {
+      print("FetchAqi event received with coordinates: "
+          "Latitude: ${event.latitude}, Longitude: ${event.longitude}");
       emit(WeatherLoading());
-      final result = await getAqiUseCase.execute(
-        event.latitude,
-        event.longitude,
-      );
-      result.fold(
-        (onError) => emit(
+      try {
+        print("Hello");
+        final result = await getAqiUseCase.execute(
+          event.latitude,
+          event.longitude,
+        );
+        print("getAQI data: ${result.toString()}");
+        result.fold((onError) {
+          print(onError);
+          emit(
+            WeatherFailure(
+              onError.toString(),
+            ),
+          );
+        }, (aqiEntity) {
+          print(aqiEntity);
+          emit(
+            WeatherSuccess(
+              aqiEntity,
+            ),
+          );
+        });
+      } on Exception catch (e) {
+        print("error in FetchAQI Event ERROR:\n${e.toString()}");
+        emit(
           WeatherFailure(
-            onError.toString(),
+            e.toString(),
           ),
-        ),
-        (aqiEntity) => emit(
-          WeatherSuccess(
-            aqiEntity,
-          ),
-        ),
-      );
+        );
+      }
     });
   }
 }

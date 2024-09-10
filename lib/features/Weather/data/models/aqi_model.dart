@@ -35,7 +35,7 @@ class AqiModel {
     return AqiModel(
       airQuality: map['main']['aqi'] as int,
       components: Map<String, double>.from(
-        (map['components'] as Map<String, double>),
+        (map['components'] as Map<String, dynamic>).map((key, value) => MapEntry(key, value.toDouble())),
       ),
       unixDateTime: DateTime.fromMillisecondsSinceEpoch(map['dt']),
     );

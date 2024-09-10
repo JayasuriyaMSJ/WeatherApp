@@ -6,6 +6,7 @@ class LocationService {
   static final LocationService _instance = LocationService._internal();
 
   // Step 2: Create a factory constructor that returns the instance
+  //For Singleton instantiate
   factory LocationService() {
     return _instance;
   }

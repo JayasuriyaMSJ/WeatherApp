@@ -33,99 +33,120 @@ class _WeatherPageState extends State<WeatherPage> {
           child: BlocBuilder<WeatherBloc, WeatherState>(
             builder: (context, state) {
               if (state is WeatherSuccess) {
-                return Column(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          right: 20.0, left: 20.0, top: 20.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RichText(
-                            text: TextSpan(
-                              text: "Good Morning",
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                          ),
-                          const Align(
-                            alignment: Alignment.topCenter,
-                            child: Icon(
-                              Icons.menu,
-                              size: 35,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 20.0, left: 20.0),
-                      child: Center(
+                try {
+                  // print(
+                  //     "Result of AQI Class: ${state.aqiEntity!.aqiInVal},\n${state.aqiEntity!.components},\n${state.aqiEntity!.dateTime},");
+                      // print(
+  // "Result of Current Weather: Weather ID = ${state.currentWeatherEntity!.weatherID},\nWeather Main = ${state.currentWeatherEntity!.weatherMain},\nWeather Description = ${state.currentWeatherEntity!.weatherDescription},\nWeather Icon = ${state.currentWeatherEntity!.weatherIcon},\nTemperature = ${state.currentWeatherEntity!.temperature},\nFeels Like = ${state.currentWeatherEntity!.feelsLike},\nTemp Min = ${state.currentWeatherEntity!.tempMin},\nTemp Max = ${state.currentWeatherEntity!.tempMax},\nPressure = ${state.currentWeatherEntity!.pressure},\nHumidity = ${state.currentWeatherEntity!.humidity},\nSea Level = ${state.currentWeatherEntity!.seaLevel},\nGrnd Level = ${state.currentWeatherEntity!.grndLevel},\nVisibility = ${state.currentWeatherEntity!.visibility},\nWind Speed = ${state.currentWeatherEntity!.windSpeed},\nWind Deg = ${state.currentWeatherEntity!.windDeg},\nWind Gust = ${state.currentWeatherEntity!.windGust},\nCloudiness = ${state.currentWeatherEntity!.cloudiness},\nUnix DateTime = ${state.currentWeatherEntity!.unixDateTime},\nCountry = ${state.currentWeatherEntity!.country},\nSunrise = ${state.currentWeatherEntity!.sunrise},\nSunset = ${state.currentWeatherEntity!.sunset},\nTime Zone = ${state.currentWeatherEntity!.timeZone},\nPlace ID = ${state.currentWeatherEntity!.placeID},\nName = ${state.currentWeatherEntity!.name},\nCOD = ${state.currentWeatherEntity!.cod}"
+// );
+                  // if (state.currentWeatherEntity != null) {
+                  //   print(
+                  //       "Result of Current Weather class: ${state.currentWeatherEntity}");
+                  // } else {
+                  //   print("nulllllllllllllllllllllllll");
+                  // }
+                  return Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            right: 20.0, left: 20.0, top: 20.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    const Icon(Icons.location_on),
-                                    const SizedBox(
-                                      width: 5 + 2,
-                                    ),
-                                    RichText(
-                                      text: TextSpan(
-                                        text:
-                                            state.aqiEntity.aqiInVal.toString(),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleLarge,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                RichText(
-                                  text: TextSpan(
-                                    text: date.formattedDate(),
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium,
-                                  ),
-                                ),
-                              ],
+                            RichText(
+                              text: TextSpan(
+                                text: "Good Morning",
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
                             ),
+                            const Align(
+                              alignment: Alignment.topCenter,
+                              child: Icon(
+                                Icons.menu,
+                                size: 35,
+                              ),
+                            )
                           ],
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 7.56,
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(right: 15.0, left: 15.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 20.0, left: 20.0),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("18"),
-                              Text("data"),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.location_on),
+                                      const SizedBox(
+                                        width: 5 + 2,
+                                      ),
+                                      RichText(
+                                        text: TextSpan(
+                                          text: state.currentWeatherEntity?.name != null? state.currentWeatherEntity!.name : "Unknown" 
+                                              .toString(),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleLarge,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                      text: date.formattedDate(),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                          Icon(Icons.telegram)
-                        ],
+                        ),
                       ),
+                      const SizedBox(
+                        height: 7.56,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(right: 15.0, left: 15.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              children: [
+                                Text("18"),
+                                Text("data"),
+                              ],
+                            ),
+                            Icon(Icons.telegram)
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                } on Exception catch (e) {
+                  return Scaffold(
+                    body: Center(
+                      child: RichText(
+                          text: TextSpan(text: "Error:\n ${e.toString()}")),
                     ),
-                  ],
-                );
+                  );
+                }
               } else {
                 print(state);
                 return Center(

@@ -25,7 +25,7 @@ class CurrentWeatherModel {
   final int timeZone;
   final int placeID;
   final String name;
-  final String cod;
+  final int cod;
 
   CurrentWeatherModel({
     required this.weatherID,
@@ -80,7 +80,7 @@ class CurrentWeatherModel {
     int? timeZone,
     int? placeID,
     String? name,
-    String? cod,
+    int? cod,
   }) {
     return CurrentWeatherModel(
       weatherID: weatherID ?? this.weatherID,
@@ -159,16 +159,16 @@ class CurrentWeatherModel {
       windSpeed: map['wind']['speed'] as double,
       windDeg: map['wind']['deg'] as int,
       windGust: map['wind']['gust'] as double,
-      cloudiness: map['cloud']['all'] as int,
+      cloudiness: map['clouds']['all'] as int,
       unixDateTime: DateTime.fromMillisecondsSinceEpoch(map['dt'] * 1000),
       country: map['sys']['country'] as String,
       sunrise:
           DateTime.fromMillisecondsSinceEpoch(map['sys']['sunrise'] * 1000),
       sunset: DateTime.fromMillisecondsSinceEpoch(map['sys']['sunset'] * 1000),
-      timeZone: map['timeZone'] as int,
+      timeZone: map['timezone'] as int,
       placeID: map['id'] as int,
       name: map['name'] as String,
-      cod: map['cod'] as String,
+      cod: map['cod'] as int,
     );
   }
 

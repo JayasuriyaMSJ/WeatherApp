@@ -68,7 +68,7 @@ class WeatherRepositoryImpl implements WeatherRepository {
           timeZone: currentWeatherModel.timeZone,
           placeID: currentWeatherModel.placeID,
           name: currentWeatherModel.name,
-          cod: currentWeatherModel.cod,
+          cod: currentWeatherModel.cod.toString(),
         );
         return Right(currentweatherEntity);
       });

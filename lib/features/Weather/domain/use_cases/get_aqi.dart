@@ -9,7 +9,7 @@ class GetAqi {
   Future<Either<ErrorLog, AqiEntity>> executeAQI(
     double latitude,
     double longitude,
-  ) {
+  ) async {
     return repository.getAQI(latitude, longitude);
   }
 }

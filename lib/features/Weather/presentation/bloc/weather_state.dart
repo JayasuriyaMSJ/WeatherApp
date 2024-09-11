@@ -13,6 +13,7 @@ final class WeatherFailure extends WeatherState {
 }
 
 final class WeatherSuccess extends WeatherState {
-  final AqiEntity aqiEntity;
-  WeatherSuccess(this.aqiEntity);
+  final AqiEntity? aqiEntity;
+  final CurrentWeatherEntity? currentWeatherEntity;
+  WeatherSuccess({this.aqiEntity, this.currentWeatherEntity});
 }

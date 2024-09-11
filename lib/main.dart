@@ -8,6 +8,7 @@ import 'package:intern_weather/features/Auth/presentation/screens/welcome_page.d
 import 'package:intern_weather/features/Weather/data/DataSource/weather_api_services.dart';
 import 'package:intern_weather/features/Weather/data/Repository/weather_repository_impl.dart';
 import 'package:intern_weather/features/Weather/domain/use_cases/get_aqi.dart';
+import 'package:intern_weather/features/Weather/domain/use_cases/get_current_weather.dart';
 import 'package:intern_weather/features/Weather/presentation/bloc/weather_bloc.dart';
 import 'package:intern_weather/features/Weather/presentation/screen/weather_page.dart';
 
@@ -38,16 +39,26 @@ Future<void> main() async {
     weatherRepository,
   );
 
+  final GetCurrentWeather getCurrentWeather = GetCurrentWeather(
+    weatherRepository,
+  );
+
   print("Initialization complete. Running the app...");
 
   runApp(MyApp(
     getAqiUseCase: getAqiUseCase,
+    getCurrentWeather: getCurrentWeather,
   ));
 }
 
 class MyApp extends StatelessWidget {
   final GetAqi getAqiUseCase;
-  MyApp({super.key, required this.getAqiUseCase});
+  final GetCurrentWeather getCurrentWeather;
+  MyApp({
+    super.key,
+    required this.getAqiUseCase,
+    required this.getCurrentWeather,
+  });
   static const keyLoginStatus = "LoggedIn";
   static const keyUserName = "userName";
   final LocationService locationService = LocationService();
@@ -72,17 +83,29 @@ class MyApp extends StatelessWidget {
             if (snap.hasData) {
               print("Got Data from LocationService : ${snap.data}");
               // \nLatitude: ${snap.data!['Latitude']}\nLongitude: ${snap.data!['Longitude']}");
+              final latitude = snap.data!['Latitude'];
+              final longitude = snap.data!['Longitude'];
               return BlocProvider<WeatherBloc>(
                 create: (context) => WeatherBloc(
                   getAqiUseCase: getAqiUseCase,
-                )..add(
+                  getCurrentWeather: getCurrentWeather,
+                )
+                  ..add(
                     FetchAqi(
-                        latitude: snap.data!['Latitude'],
-                        longitude: snap.data!['Longitude']),
+                      latitude: latitude,
+                      longitude: longitude,
+                    ),
+                  )
+                  ..add(
+                    FetchCurrentWeather(
+                      latitude: latitude,
+                      longitude: longitude,
+                    ),
                   ),
-                child: userIsLoggedIn == true
-                    ? const WeatherPage()
-                    : const WelcomePage(),
+                child: const WeatherPage(),
+                //  userIsLoggedIn == true
+                //     ? const WeatherPage()
+                //     : const WelcomePage(),
               );
             } else {
               return Scaffold(

@@ -9,3 +9,10 @@ class FetchAqi extends WeatherEvent {
 
   FetchAqi({required this.latitude, required this.longitude});
 }
+
+class FetchCurrentWeather extends WeatherEvent {
+  final double latitude;
+  final double longitude;
+
+  FetchCurrentWeather({required this.latitude, required this.longitude});
+}

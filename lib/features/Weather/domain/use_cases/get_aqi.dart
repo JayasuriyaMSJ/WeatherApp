@@ -6,7 +6,7 @@ import 'package:intern_weather/features/Weather/domain/Repository/weather_reposi
 class GetAqi {
   final WeatherRepository repository;
   GetAqi(this.repository);
-  Future<Either<ErrorLog, AqiEntity>> execute(
+  Future<Either<ErrorLog, AqiEntity>> executeAQI(
     double latitude,
     double longitude,
   ) {

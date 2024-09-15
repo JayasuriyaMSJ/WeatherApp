@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intern_weather/features/Explore/presentation/screens/explore_forecast.dart';
-import 'package:intern_weather/features/Weather/presentation/screen/weather_u_i.dart';
+import 'package:intern_weather/features/Weather/presentation/screen/Explorer_page/explore_forecast.dart';
+import 'package:intern_weather/features/Weather/presentation/screen/WeatherUI/weather_u_i.dart';
 
 class AppNavigationBar extends StatefulWidget {
   const AppNavigationBar({super.key});

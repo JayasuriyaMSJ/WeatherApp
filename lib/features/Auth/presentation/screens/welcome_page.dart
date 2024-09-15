@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:intern_weather/core/utils/app_preference.dart';
 import 'package:intern_weather/core/utils/design/auth_button.dart';
 import 'package:intern_weather/core/utils/design/auth_field.dart';
-import 'package:intern_weather/features/Weather/presentation/screen/weather_page.dart';
+import 'package:intern_weather/features/Weather/presentation/screen/WeatherUI/weather_page.dart';
 import 'package:intern_weather/main.dart';
 
 class WelcomePage extends StatefulWidget {

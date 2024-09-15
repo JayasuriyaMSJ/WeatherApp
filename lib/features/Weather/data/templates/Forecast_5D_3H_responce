@@ -1,6 +1,3 @@
-url = api.openweathermap.org/data/2.5/forecast?lat=21.6240113&lon=73.0253784&appid={API_Key}
-
-
 {
   "cod": "200",
   "message": 0,

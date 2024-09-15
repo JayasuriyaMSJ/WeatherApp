@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class CurrentWeatherEntity {
   final int weatherID;
   final String weatherMain;
@@ -52,4 +54,63 @@ class CurrentWeatherEntity {
     required this.name,
     required this.cod,
   });
+
+  // Convert CurrentWeatherEntity to JSON map
+  Map<String, dynamic> toJson() => {
+        'weatherID': weatherID,
+        'weatherMain': weatherMain,
+        'weatherDescription': weatherDescription,
+        'weatherIcon': weatherIcon,
+        'temperature': temperature,
+        'feelsLike': feelsLike,
+        'tempMin': tempMin,
+        'tempMax': tempMax,
+        'pressure': pressure,
+        'humidity': humidity,
+        'seaLevel': seaLevel,
+        'grndLevel': grndLevel,
+        'visibility': visibility,
+        'windSpeed': windSpeed,
+        'windDeg': windDeg,
+        'windGust': windGust,
+        'cloudiness': cloudiness,
+        'unixDateTime': unixDateTime.toIso8601String(),
+        'country': country,
+        'sunrise': sunrise.toIso8601String(),
+        'sunset': sunset.toIso8601String(),
+        'timeZone': timeZone,
+        'placeID': placeID,
+        'name': name,
+        'cod': cod,
+      };
+
+  // Convert JSON map to CurrentWeatherEntity
+  factory CurrentWeatherEntity.fromJson(Map<String, dynamic> json) =>
+      CurrentWeatherEntity(
+        weatherID: json['weatherID'],
+        weatherMain: json['weatherMain'],
+        weatherDescription: json['weatherDescription'],
+        weatherIcon: json['weatherIcon'],
+        temperature: json['temperature'],
+        feelsLike: json['feelsLike'],
+        tempMin: json['tempMin'],
+        tempMax: json['tempMax'],
+        pressure: json['pressure'],
+        humidity: json['humidity'],
+        seaLevel: json['seaLevel'],
+        grndLevel: json['grndLevel'],
+        visibility: json['visibility'],
+        windSpeed: json['windSpeed'],
+        windDeg: json['windDeg'],
+        windGust: json['windGust'],
+        cloudiness: json['cloudiness'],
+        unixDateTime: DateTime.parse(json['unixDateTime']),
+        country: json['country'],
+        sunrise: DateTime.parse(json['sunrise']),
+        sunset: DateTime.parse(json['sunset']),
+        timeZone: json['timeZone'],
+        placeID: json['placeID'],
+        name: json['name'],
+        cod: json['cod'],
+      );
 }

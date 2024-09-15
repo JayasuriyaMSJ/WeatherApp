@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColorPalette {
   // Dark Theme
-  static const Color darkBackground = Color.fromARGB(255, 0, 8, 32);
+  static const Color darkBackground = Color.fromARGB(255, 0, 0, 0);
   static const Color darkCardBackground = Color.fromARGB(255, 0, 40, 88);
   static const Color darkBorderColor = Color(0xFF4a5a6f);
   static const Color darkText = Color(0xFFe6e6e6);
@@ -27,6 +27,7 @@ class AppColorPalette {
 
   static const transperent = Colors.transparent;
   static const white = Color.fromARGB(255, 221, 216, 216);
+  static const whitebright = Colors.white70;
   static const black = Colors.black;
   static const grey = Colors.grey;
   static const red = Colors.red;

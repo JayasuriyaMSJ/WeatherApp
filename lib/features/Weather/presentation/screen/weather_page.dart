@@ -39,12 +39,13 @@ class _WeatherPageState extends State<WeatherPage> {
                       // print(
   // "Result of Current Weather: Weather ID = ${state.currentWeatherEntity!.weatherID},\nWeather Main = ${state.currentWeatherEntity!.weatherMain},\nWeather Description = ${state.currentWeatherEntity!.weatherDescription},\nWeather Icon = ${state.currentWeatherEntity!.weatherIcon},\nTemperature = ${state.currentWeatherEntity!.temperature},\nFeels Like = ${state.currentWeatherEntity!.feelsLike},\nTemp Min = ${state.currentWeatherEntity!.tempMin},\nTemp Max = ${state.currentWeatherEntity!.tempMax},\nPressure = ${state.currentWeatherEntity!.pressure},\nHumidity = ${state.currentWeatherEntity!.humidity},\nSea Level = ${state.currentWeatherEntity!.seaLevel},\nGrnd Level = ${state.currentWeatherEntity!.grndLevel},\nVisibility = ${state.currentWeatherEntity!.visibility},\nWind Speed = ${state.currentWeatherEntity!.windSpeed},\nWind Deg = ${state.currentWeatherEntity!.windDeg},\nWind Gust = ${state.currentWeatherEntity!.windGust},\nCloudiness = ${state.currentWeatherEntity!.cloudiness},\nUnix DateTime = ${state.currentWeatherEntity!.unixDateTime},\nCountry = ${state.currentWeatherEntity!.country},\nSunrise = ${state.currentWeatherEntity!.sunrise},\nSunset = ${state.currentWeatherEntity!.sunset},\nTime Zone = ${state.currentWeatherEntity!.timeZone},\nPlace ID = ${state.currentWeatherEntity!.placeID},\nName = ${state.currentWeatherEntity!.name},\nCOD = ${state.currentWeatherEntity!.cod}"
 // );
-                  // if (state.currentWeatherEntity != null) {
-                  //   print(
-                  //       "Result of Current Weather class: ${state.currentWeatherEntity}");
-                  // } else {
-                  //   print("nulllllllllllllllllllllllll");
-                  // }
+                  if (state.currentWeatherEntity != null) {
+                    print("Result of AQI Weather class: ${state.aqiEntity.toString()}");
+                    print("Result of Current Weather class: ${state.currentWeatherEntity.toString()}");
+                    // print("Result of Current Weather class: ${state.currentWeatherEntity.toString()}");
+                  } else {
+                    print("null");
+                  }
                   return Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [

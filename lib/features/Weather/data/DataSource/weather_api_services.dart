@@ -33,6 +33,7 @@ class WeatherApiServiceImpl extends WeatherApiServices {
 
       if (responce.statusCode == 200) {
         final aqiRes = res['list'][0];
+        print("AQI result in Data Layer souce:\n$aqiRes");
         // directly Deployed in AQIModel
         // {
         // final airQuality = aqiRes['main']['aqi'];

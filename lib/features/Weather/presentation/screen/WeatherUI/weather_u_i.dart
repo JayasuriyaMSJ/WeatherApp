@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intern_weather/core/colors/app_color_palette.dart';
+import 'package:intern_weather/core/utils/LocationService/location_service.dart';
 import 'package:intern_weather/core/utils/kelvin_converter.dart';
+import 'package:intern_weather/core/utils/widget_for_weather/icon_selector.dart';
 import 'package:intern_weather/features/Weather/presentation/bloc/weather_bloc.dart';
+import 'package:intl/intl.dart';
 
 class WeatherUI extends StatefulWidget {
   const WeatherUI({super.key});
@@ -12,13 +15,18 @@ class WeatherUI extends StatefulWidget {
 }
 
 class _WeatherUIState extends State<WeatherUI> {
-  late double latitude;
-  late double longitude;
-  bool isLocationFetched = false;
+  final LocationService _locationService = LocationService();
 
   @override
   void initState() {
     super.initState();
+  }
+
+  // TODO: Need to fetch location from the moblie
+  // for fetched from th API openweathermap
+  String getLocation() {
+    // final locationName = _locationService.locationPlaceAsName(latitude, longitude)
+    return 'London';
   }
 
   String getGreetingMessage() {
@@ -102,6 +110,9 @@ class _WeatherUIState extends State<WeatherUI> {
             final weatherHumidity = state.currentWeatherEntity.humidity;
             final weatherWindSpeed = state.currentWeatherEntity.windSpeed;
             final weatherPressure = state.currentWeatherEntity.pressure;
+            final weatherSunrise = state.currentWeatherEntity.sunrise;
+            final weatherSunset = state.currentWeatherEntity.sunset;
+            final placeName = state.currentWeatherEntity.name;
 
             final airQuality = state.aqiEntity.aqiInVal;
 
@@ -154,17 +165,46 @@ class _WeatherUIState extends State<WeatherUI> {
                       ),
                       RichText(
                         text: TextSpan(
-                          text: "Location Name",
+                          text: placeName.toString(),
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(
-                    height: 5,
+                    height: 2,
                   ),
                   Stack(
                     children: [
+                      Align(
+                        alignment: const AlignmentDirectional(0, 0),
+                        child: Card(
+                          color: AppColorPalette.grey.withOpacity(0.2),
+                          child: ShaderMask(
+                            shaderCallback: (Rect bounds) {
+                              return const LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  // AppColorPalette.white,
+                                  AppColorPalette.cyan,
+                                  AppColorPalette.white,
+                                ],
+                              ).createShader(bounds);
+                            },
+                            child: Text(
+                              '${valueFormatter(weatheCelius).toString()}°C',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 130,
+                                fontWeight: FontWeight.bold,
+                                color: Colors
+                                    .white, // Color is required but won't be used due to ShaderMask
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                       Align(
                         alignment: const AlignmentDirectional(0, 0),
                         child: Padding(
@@ -172,35 +212,9 @@ class _WeatherUIState extends State<WeatherUI> {
                               const EdgeInsetsDirectional.fromSTEB(0, 50, 0, 0),
                           child: ClipRect(
                             child: Image.asset(
-                              "assets/icon/1.png",
+                              getWeatherIcon(weatherId).toString(),
                               width: 350,
-                              height: 300,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Align(
-                        alignment: const AlignmentDirectional(0, 0),
-                        child: ShaderMask(
-                          shaderCallback: (Rect bounds) {
-                            return const LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                AppColorPalette.white,
-                                AppColorPalette.white,
-                                AppColorPalette.black,
-                              ],
-                            ).createShader(bounds);
-                          },
-                          child: const Text(
-                            '°C',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 130,
-                              fontWeight: FontWeight.bold,
-                              color: Colors
-                                  .white, // Color is required but won't be used due to ShaderMask
+                              height: 250,
                             ),
                           ),
                         ),
@@ -209,12 +223,46 @@ class _WeatherUIState extends State<WeatherUI> {
                   ),
                   RichText(
                     text: TextSpan(
-                      text: state.currentWeatherEntity.weatherDescription,
-                      style: Theme.of(context).textTheme.titleLarge,
+                      children: [
+                        TextSpan(
+                          text: "Weather: ",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(fontWeight: FontWeight.normal),
+                        ),
+                        TextSpan(
+                          text: '"${weatherMain.toUpperCase()}"',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(
                     height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.info_outline),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: weatherDescription.toUpperCase(),
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 15,
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -236,17 +284,17 @@ class _WeatherUIState extends State<WeatherUI> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               elements(
-                                Icons.wind_power,
+                                "assets/images/speed.png",
                                 weatherWindSpeed.toString(),
                                 "Wind Speed",
                               ),
                               elements(
-                                Icons.air,
+                                "assets/images/wind.png",
                                 airQualityDefiner(airQuality),
                                 "Air Quality",
                               ),
                               elements(
-                                Icons.water_,
+                                "assets/images/humidity.png",
                                 weatherHumidity.toString(),
                                 "Humidity",
                               ),
@@ -263,19 +311,19 @@ class _WeatherUIState extends State<WeatherUI> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               elements(
-                                Icons.air,
-                                "Good",
-                                "Air Quality",
+                                "assets/images/sunrise.png",
+                                timeFormatter(weatherSunrise).toString(),
+                                "Sun Rise",
                               ),
                               elements(
-                                Icons.air,
-                                "Good",
-                                "Air Quality",
+                                "assets/images/atmospheric.png",
+                                weatherPressure.toString(),
+                                "Pressure",
                               ),
                               elements(
-                                Icons.air,
-                                "Good",
-                                "Air Quality",
+                                "assets/images/sunset.png",
+                                timeFormatter(weatherSunset).toString(),
+                                "Sunset",
                               ),
                             ],
                           ),
@@ -320,28 +368,49 @@ class _WeatherUIState extends State<WeatherUI> {
   }
 
   Widget elements(
-    IconData icon,
+    String icon,
     dynamic value,
     String name,
   ) {
-    return Column(
-      children: [
-        Icon(
-          icon,
-        ),
-        RichText(
-          text: TextSpan(
-            text: value.toString(),
-            style: Theme.of(context).textTheme.bodyMedium,
+    return GestureDetector(
+      onLongPressStart: (details) {
+        print('Long press started');
+      },
+      onLongPressEnd: (details) {
+        print("Long press ended");
+      },
+      child: Column(
+        children: [
+          Image.asset(
+            icon,
+            height: 25,
+            width: 30,
           ),
-        ),
-        RichText(
-          text: TextSpan(
-            text: name.toString(),
-            style: Theme.of(context).textTheme.labelMedium,
+          RichText(
+            text: TextSpan(
+              text: value.toString(),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           ),
-        ),
-      ],
+          RichText(
+            text: TextSpan(
+              text: name.toString(),
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  String timeFormatter(DateTime dateTime) {
+    final DateFormat format = DateFormat('hh:mm a'); // Format for AM/PM time
+    final String formattedTime = format.format(dateTime);
+    return formattedTime;
+  }
+
+  String valueFormatter(double value) {
+    String formatterValue = value.toStringAsFixed(0);
+    return formatterValue;
   }
 }

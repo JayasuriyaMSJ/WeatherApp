@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:http/http.dart' as http;
 import 'package:intern_weather/core/logs/errors/error_logs.dart';
@@ -6,14 +7,17 @@ import 'package:intern_weather/features/Weather/data/models/aqi_model.dart';
 import 'package:intern_weather/features/Weather/data/models/current_weather_model.dart';
 import 'package:intern_weather/features/Weather/data/models/forecast_model.dart';
 
-abstract class WeatherApiServices {
+abstract interface class WeatherApiServices {
   final String apiKey;
 
   WeatherApiServices({required this.apiKey});
 
-  Future<Either<ErrorLog, AqiModel>> aqiService(double latitude, double longitude);
-  Future<Either<ErrorLog, CurrentWeatherModel>> currentWeatherService(double latitude, double longitude);
-  Future<Either<ErrorLog, List<ForecastModel>>> weatherForecast(double latitude, double longitude);
+  Future<Either<ErrorLog, AqiModel>> aqiService(
+      double latitude, double longitude);
+  Future<Either<ErrorLog, CurrentWeatherModel>> currentWeatherService(
+      double latitude, double longitude);
+  Future<Either<ErrorLog, List<ForecastModel>>> weatherForecast(
+      double latitude, double longitude);
 }
 
 class WeatherApiServiceImpl extends WeatherApiServices {
@@ -25,7 +29,7 @@ class WeatherApiServiceImpl extends WeatherApiServices {
       print("Making HTTP GET request to: $url");
       final response = await http.get(Uri.parse(url));
       print("HTTP GET Response status code: ${response.statusCode}");
-      
+
       final resBody = response.body;
       print("HTTP GET Response body: $resBody");
 
@@ -41,12 +45,14 @@ class WeatherApiServiceImpl extends WeatherApiServices {
   }
 
   @override
-  Future<Either<ErrorLog, AqiModel>> aqiService(double latitude, double longitude) async {
-    final url = "http://api.openweathermap.org/data/2.5/air_pollution?lat=$latitude&lon=$longitude&appid=$apiKey";
-    
+  Future<Either<ErrorLog, AqiModel>> aqiService(
+      double latitude, double longitude) async {
+    final url =
+        "http://api.openweathermap.org/data/2.5/air_pollution?lat=$latitude&lon=$longitude&appid=$apiKey";
+
     print("Fetching AQI data...");
     final result = await _get(url);
-    
+
     return result.fold(
       (error) {
         print("Error fetching AQI data: ${error.message}");
@@ -67,9 +73,11 @@ class WeatherApiServiceImpl extends WeatherApiServices {
   }
 
   @override
-  Future<Either<ErrorLog, CurrentWeatherModel>> currentWeatherService(double latitude, double longitude) async {
-    final url = "http://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey";
-    
+  Future<Either<ErrorLog, CurrentWeatherModel>> currentWeatherService(
+      double latitude, double longitude) async {
+    final url =
+        "http://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=$apiKey";
+
     print("Fetching current weather data...");
     final result = await _get(url);
 
@@ -84,15 +92,18 @@ class WeatherApiServiceImpl extends WeatherApiServices {
           return Right(CurrentWeatherModel.fromMap(data));
         } catch (e) {
           print("Error parsing current weather data: ${e.toString()}");
-          return Left(ErrorLog("Failed to parse current weather data: ${e.toString()}"));
+          return Left(ErrorLog(
+              "Failed to parse current weather data: ${e.toString()}"));
         }
       },
     );
   }
 
   @override
-  Future<Either<ErrorLog, List<ForecastModel>>> weatherForecast(double latitude, double longitude) async {
-    final url = "http://api.openweathermap.org/data/2.5/forecast?lat=$latitude&lon=$longitude&appid=$apiKey";
+  Future<Either<ErrorLog, List<ForecastModel>>> weatherForecast(
+      double latitude, double longitude) async {
+    final url =
+        "http://api.openweathermap.org/data/2.5/forecast?lat=$latitude&lon=$longitude&appid=$apiKey";
 
     print("Fetching weather forecast data...");
     final result = await _get(url);
@@ -107,14 +118,16 @@ class WeatherApiServiceImpl extends WeatherApiServices {
           print("Forecast raw data: $data");
           final List forecastList = data['list'];
           print("Parsed forecast list: $forecastList");
-          
-          final forecastModels = forecastList.map((json) => ForecastModel.fromMap(json)).toList();
+
+          final forecastModels =
+              forecastList.map((json) => ForecastModel.fromMap(json)).toList();
           print("Mapped ForecastModel list: $forecastModels");
-          
+
           return Right(forecastModels);
         } catch (e) {
           print("Error parsing forecast data: ${e.toString()}");
-          return Left(ErrorLog("Failed to parse Forecast data: ${e.toString()}"));
+          return Left(
+              ErrorLog("Failed to parse Forecast data: ${e.toString()}"));
         }
       },
     );

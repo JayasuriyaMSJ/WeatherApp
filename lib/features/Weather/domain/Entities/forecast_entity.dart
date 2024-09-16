@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class ForecastEntity {
   final double temperature;
   final int weatherId;
@@ -8,7 +6,7 @@ class ForecastEntity {
   final String weatherIcon;
   final DateTime dt;
   final String dtTxt;
-  
+
   ForecastEntity({
     required this.temperature,
     required this.weatherId,
@@ -40,4 +38,9 @@ class ForecastEntity {
         dt: DateTime.parse(json['dt']),
         dtTxt: json['dtTxt'],
       );
+
+  @override
+  String toString() {
+    return 'ForecastEntity(temperature: $temperature, weatherId: $weatherId, weatherMain: $weatherMain, weatherDescription: $weatherDescription, weatherIcon: $weatherIcon, dt: $dt, dtTxt: $dtTxt)';
+  }
 }

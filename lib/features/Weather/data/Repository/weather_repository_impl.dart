@@ -121,20 +121,6 @@ class WeatherRepositoryImpl implements WeatherRepository {
               dtTxt: forecastModel.dtTxt,
             );
           }).toList();
-          final forecastEntitiesfodebug = forecastList
-              .map((forecastModel) {
-                return ForecastEntity(
-                  temperature: forecastModel.temperature,
-                  weatherId: forecastModel.weatherId,
-                  weatherMain: forecastModel.weatherMain,
-                  weatherDescription: forecastModel.weatherDescription,
-                  weatherIcon: forecastModel.weatherIcon,
-                  dt: forecastModel.dt,
-                  dtTxt: forecastModel.dtTxt,
-                );
-              })
-              .toList()
-              .toString();
           // print(
           //     "Mapped Forecast Entities: ${forecastEntitiesfodebug.toString()}");
           print("Mapped Forecast Entities: ${forecastEntities.map((entity) => entity.toString()).toList()}");

@@ -1,25 +1,48 @@
 import 'package:intern_weather/features/Weather/domain/Entities/forecast_entity.dart';
 
 class ForecastManager {
-  final List<ForecastEntity> forecasts;
+  // Private constructor
+  ForecastManager._privateConstructor();
 
-  ForecastManager(this.forecasts);
+  // The single instance of ForecastManager
+  static final ForecastManager _instance =
+      ForecastManager._privateConstructor();
 
-  List<ForecastEntity> filterByDay(DateTime targetDate) {
-    return forecasts.where((forecast) {
-      final forecastDate = DateTime.parse(forecast.dtTxt).toLocal();
-      return _isSameDay(forecastDate, targetDate);
-    }).toList();
+  // Factory constructor to return the same instance
+  factory ForecastManager({required List<ForecastEntity> forecastEntity}) {
+    _instance.forecastEntity = forecastEntity;
+    return _instance;
   }
 
-  bool _isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
+  late List<ForecastEntity> forecastEntity;
+
+  // Method to split forecasts by day
+  Map<DateTime, List<ForecastEntity>> splitByDay() {
+    Map<DateTime, List<ForecastEntity>> forecastByDay = {};
+    for (var entity in forecastEntity) {
+      DateTime date = DateTime(entity.dt.year, entity.dt.month, entity.dt.day);
+
+      if (forecastByDay.containsKey(date)) {
+        forecastByDay[date]!.add(entity);
+      } else {
+        forecastByDay[date] = [entity];
+      }
+    }
+    return forecastByDay;
+  }
+
+  @override
+  String toString() {
+    final forecastByDay = splitByDay();
+    StringBuffer buffer = StringBuffer();
+    buffer.writeln(
+        'ForecastManager: ${forecastEntity.length} forecast entities managed');
+    forecastByDay.forEach((date, entities) {
+      buffer.writeln('Date: ${date.toIso8601String()}');
+      for (var entity in entities) {
+        buffer.writeln('  ${entity.toString()}');
+      }
+    });
+    return buffer.toString();
   }
 }
-
-// void main() {
-//   final forecastDate = DateTime.parse("2024-09-16 06:00:00").toLocal();
-//   print(forecastDate);
-// }

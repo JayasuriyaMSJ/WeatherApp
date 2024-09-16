@@ -10,6 +10,6 @@ class GetAqi {
     double latitude,
     double longitude,
   ) async {
-    return repository.getAQI(latitude, longitude);
+    return await repository.getAQI(latitude, longitude);
   }
 }

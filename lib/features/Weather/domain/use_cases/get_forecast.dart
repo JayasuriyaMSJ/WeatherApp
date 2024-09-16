@@ -8,6 +8,6 @@ class GetForecast {
   GetForecast(this.weatherRepository);
 
   Future<Either<ErrorLog, List<ForecastEntity>>> executeForecast(double latitude, double longitude) async {
-    return weatherRepository.getForecastData(latitude, longitude);
+    return await weatherRepository.getForecastData(latitude, longitude);
   }
 }

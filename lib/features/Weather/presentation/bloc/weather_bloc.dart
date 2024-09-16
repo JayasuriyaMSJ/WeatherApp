@@ -15,11 +15,17 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   final GetCurrentWeather getCurrentWeatherUseCase;
   final GetForecast getForecastUseCase;
 
+  AqiEntity? _aqiEntity;
+  CurrentWeatherEntity? _currentWeatherEntity;
+  List<ForecastEntity>? _forecastEntity;
+
   WeatherBloc({
     required this.getAqiUseCase,
     required this.getCurrentWeatherUseCase,
     required this.getForecastUseCase,
-  }) : super(WeatherInitial()) {
+  }) : super(
+          WeatherInitial(),
+        ) {
     on<FetchAqi>((event, emit) async {
       print("FetchAqi event received with coordinates: "
           "Latitude: ${event.latitude}, Longitude: ${event.longitude}");
@@ -31,15 +37,21 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
           event.latitude,
           event.longitude,
         );
-        print("Received AQI data: $result");
+        print("Received AQI data: ${result.toString()}");
         result.fold(
           (onError) {
             print("Error while fetching AQI: ${onError.toString()}");
             emit(WeatherFailure(onError.toString()));
           },
           (aqiEntity) {
-            print("AQI successfully fetched: $aqiEntity");
-            emit(WeatherSuccess(aqiEntity: aqiEntity));
+            print("AQI successfully fetched: ${aqiEntity.toString()}");
+            _aqiEntity = aqiEntity;
+            _checkAndEmitCombinedSuccessState(emit);
+            // emit(
+            //   AQISuccess(
+            //     aqiEntity: aqiEntity,
+            //   ),
+            // );
           },
         );
       } on Exception catch (e) {
@@ -59,7 +71,7 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
           event.latitude,
           event.longitude,
         );
-        print("Received current weather data: $result");
+        print("Received current weather data: ${result.toString()}");
         result.fold(
           (onError) {
             print(
@@ -68,8 +80,14 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
           },
           (currentWeatherEntity) {
             print(
-                "Current weather successfully fetched: $currentWeatherEntity");
-            emit(WeatherSuccess(currentWeatherEntity: currentWeatherEntity));
+                "Current weather successfully fetched: ${currentWeatherEntity.toString()}");
+            _currentWeatherEntity = currentWeatherEntity;
+            _checkAndEmitCombinedSuccessState(emit);
+            // emit(
+            //   CurrentWeatherSuccess(
+            //     currentWeatherEntity: currentWeatherEntity,
+            //   ),
+            // );
           },
         );
       } catch (e) {
@@ -89,15 +107,27 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
           event.latitude,
           event.longitude,
         );
-        print("Received forecast data: $result");
+        print("Received forecast data: ${result.toString()}");
         result.fold(
           (onError) {
             print("Error while fetching forecast: ${onError.toString()}");
             emit(WeatherFailure(onError.toString()));
           },
-          (forecastEntities) {
-            print("Forecast successfully fetched: $forecastEntities");
-            emit(WeatherSuccess(forecastEntity: forecastEntities));
+          (forecastEntities) async {
+            if (forecastEntities.isNotEmpty) {
+              print(
+                  "Forecast successfully fetched: ${forecastEntities.toString()}");
+              _forecastEntity = forecastEntities;
+              _checkAndEmitCombinedSuccessState(emit);
+              // emit(
+              //   ForecastSuccess(
+              //     forecastEntity: forecastEntities,
+              //   ),
+              // );
+            } else {
+              print("No forecast data received");
+              emit(WeatherFailure("No forecast data received"));
+            }
           },
         );
       } catch (e) {
@@ -105,5 +135,25 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
         emit(WeatherFailure(e.toString()));
       }
     });
+  }
+
+  void _checkAndEmitCombinedSuccessState(Emitter<WeatherState> emit) {
+    try {
+      if (_aqiEntity != null &&
+          _currentWeatherEntity != null &&
+          _forecastEntity != null) {
+        emit(
+          WeatherSuccess(
+            aqiEntity: _aqiEntity!,
+            currentWeatherEntity: _currentWeatherEntity!,
+            forecastEntity: _forecastEntity!,
+          ),
+        );
+      } else {
+        print("Error in BLoC: ${emit.toString()}");
+      }
+    } on Exception catch (e) {
+      print(e.toString());
+    }
   }
 }

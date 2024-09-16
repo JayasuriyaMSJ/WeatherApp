@@ -4,8 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intern_weather/core/colors/app_color_palette.dart';
 import 'package:intern_weather/core/utils/date_time_service.dart';
 import 'package:intern_weather/core/utils/widget_for_weather/icon_selector.dart';
-import 'package:intern_weather/features/Weather/domain/Entities/forecast_entity.dart';
-import 'package:intern_weather/features/Weather/domain/use_cases/forecast_manager.dart';
 import 'package:intern_weather/features/Weather/presentation/bloc/weather_bloc.dart';
 import 'package:intern_weather/features/Weather/presentation/widgets/fore_cast_chart.dart';
 
@@ -27,18 +25,17 @@ class _ExploreForecastState extends State<ExploreForecast> {
   ];
   final DateTimeService _dateTimeService = DateTimeService();
   int selectedDayIndex = 0;
-  ForecastManager? _forecastManager;
 
   @override
   void initState() {
     super.initState();
     print(_dateTimeService.formattedDate());
     forecastDays = [
-      "Today", // Today
-      _dateTimeService.formattedDayWithOffset(1), // Tomorrow
-      _dateTimeService.formattedDayWithOffset(2), // Day after tomorrow
-      _dateTimeService.formattedDayWithOffset(3), // Two days after tomorrow
-      _dateTimeService.formattedDayWithOffset(4), // Yesterday
+      "Today", //_dateTimeService.formattedDayWithOffset(0),
+      _dateTimeService.formattedDayWithOffset(1), 
+      _dateTimeService.formattedDayWithOffset(2), 
+      _dateTimeService.formattedDayWithOffset(3), 
+      _dateTimeService.formattedDayWithOffset(4), 
     ];
   }
 
@@ -47,24 +44,33 @@ class _ExploreForecastState extends State<ExploreForecast> {
     return SafeArea(
       child: BlocBuilder<WeatherBloc, WeatherState>(
         builder: (context, state) {
-          if (state is WeatherLoading) {
-            return const CircularProgressIndicator();
+          if (state is WeatherInitial) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const CircularProgressIndicator(),
+                  const SizedBox(),
+                  RichText(
+                    text: TextSpan(
+                      text:
+                          "Intializing The Weather App \nwritten by Jayasuriya MSJ",
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else if (state is WeatherLoading) {
+            return const Center(child: CircularProgressIndicator());
           } else if (state is WeatherFailure) {
             return Text('Error: ${state.message}');
-          }
-
-          if (state is WeatherSuccess) {
+          } else if (state is WeatherSuccess) {
             final forecastEntities = state.forecastEntity;
             if (forecastEntities == null || forecastEntities.isEmpty) {
-              return const Text('No forecast data available');
+              return Text('No forecast data available ${forecastEntities.toString()}');
             }
-            List<ForecastEntity> selectedDayForecast =
-                state.forecastEntity!.where((forecast) {
-              return forecast.dtTxt.contains(
-                  _dateTimeService.formattedDayWithOffset(selectedDayIndex));
-            }).toList();
-
-            print(selectedDayForecast.toString());
             return Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -148,6 +154,7 @@ class _ExploreForecastState extends State<ExploreForecast> {
               ),
             );
           } else {
+            print("Current state is ${state.toString()}");
             return Center(
               child: Column(
                 children: [

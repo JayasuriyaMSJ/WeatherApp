@@ -1,7 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:intern_weather/core/logs/errors/error_logs.dart';
 import 'package:intern_weather/features/Weather/data/DataSource/weather_api_services.dart';
-import 'package:intern_weather/features/Weather/data/models/forecast_model.dart';
 import 'package:intern_weather/features/Weather/domain/Entities/aqi_entity.dart';
 import 'package:intern_weather/features/Weather/domain/Entities/current_weather_entity.dart';
 import 'package:intern_weather/features/Weather/domain/Entities/forecast_entity.dart';
@@ -9,7 +8,7 @@ import 'package:intern_weather/features/Weather/domain/Repository/weather_reposi
 
 class WeatherRepositoryImpl implements WeatherRepository {
   final WeatherApiServices weatherAPI;
-  
+
   WeatherRepositoryImpl({required this.weatherAPI});
 
   @override
@@ -20,7 +19,7 @@ class WeatherRepositoryImpl implements WeatherRepository {
     try {
       final aqiData = await weatherAPI.aqiService(latitude, longitude);
       print("AQI data from API: ${aqiData.toString()}");
-      return aqiData.fold(
+      return await aqiData.fold(
         (onError) {
           print("Error fetching AQI data: ${onError.message}");
           return Left(ErrorLog(onError.message));
@@ -50,12 +49,12 @@ class WeatherRepositoryImpl implements WeatherRepository {
       final currentWeather =
           await weatherAPI.currentWeatherService(latitude, longitude);
       print("Current weather data from API: ${currentWeather.toString()}");
-      return currentWeather.fold(
+      return await currentWeather.fold(
         (onError) {
           print("Error fetching current weather data: ${onError.message}");
           return Left(ErrorLog(onError.message));
         },
-        (currentWeatherModel) {
+        (currentWeatherModel) async {
           final CurrentWeatherEntity currentweatherEntity =
               CurrentWeatherEntity(
             weatherID: currentWeatherModel.weatherID,
@@ -84,8 +83,9 @@ class WeatherRepositoryImpl implements WeatherRepository {
             name: currentWeatherModel.name,
             cod: currentWeatherModel.cod.toString(),
           );
-          print("Mapped Current Weather Entity: ${currentweatherEntity.toString()}");
-          return Right(currentweatherEntity);
+          print(
+              "Mapped Current Weather Entity: ${currentweatherEntity.toString()}");
+          return  Right(currentweatherEntity);
         },
       );
     } catch (e) {
@@ -97,14 +97,14 @@ class WeatherRepositoryImpl implements WeatherRepository {
   }
 
   @override
- Future<Either<ErrorLog, List<ForecastEntity>>> getForecastData(
+  Future<Either<ErrorLog, List<ForecastEntity>>> getForecastData(
       double latitude, double longitude) async {
     try {
       final weatherForecast =
           await weatherAPI.weatherForecast(latitude, longitude);
       print("Weather forecast data from API: ${weatherForecast.toString()}");
 
-      return weatherForecast.fold(
+      return await weatherForecast.fold(
         (onError) {
           print("Error fetching forecast data: ${onError.message}");
           return Left(ErrorLog(onError.message));
@@ -121,7 +121,23 @@ class WeatherRepositoryImpl implements WeatherRepository {
               dtTxt: forecastModel.dtTxt,
             );
           }).toList();
-          print("Mapped Forecast Entities: ${forecastEntities.toString()}");
+          final forecastEntitiesfodebug = forecastList
+              .map((forecastModel) {
+                return ForecastEntity(
+                  temperature: forecastModel.temperature,
+                  weatherId: forecastModel.weatherId,
+                  weatherMain: forecastModel.weatherMain,
+                  weatherDescription: forecastModel.weatherDescription,
+                  weatherIcon: forecastModel.weatherIcon,
+                  dt: forecastModel.dt,
+                  dtTxt: forecastModel.dtTxt,
+                );
+              })
+              .toList()
+              .toString();
+          // print(
+          //     "Mapped Forecast Entities: ${forecastEntitiesfodebug.toString()}");
+          print("Mapped Forecast Entities: ${forecastEntities.map((entity) => entity.toString()).toList()}");
           return Right(forecastEntities);
         },
       );

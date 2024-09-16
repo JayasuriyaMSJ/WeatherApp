@@ -11,7 +11,6 @@ import 'package:intern_weather/features/Weather/domain/use_cases/get_aqi.dart';
 import 'package:intern_weather/features/Weather/domain/use_cases/get_current_weather.dart';
 import 'package:intern_weather/features/Weather/domain/use_cases/get_forecast.dart';
 import 'package:intern_weather/features/Weather/presentation/bloc/weather_bloc.dart';
-import 'package:intern_weather/features/Weather/presentation/screen/WeatherUI/weather_u_i.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

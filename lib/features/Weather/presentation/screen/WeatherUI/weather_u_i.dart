@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intern_weather/core/colors/app_color_palette.dart';
-import 'package:intern_weather/core/utils/LocationService/location_service.dart';
+import 'package:intern_weather/core/utils/kelvin_converter.dart';
 import 'package:intern_weather/features/Weather/presentation/bloc/weather_bloc.dart';
 
 class WeatherUI extends StatefulWidget {
@@ -19,34 +19,6 @@ class _WeatherUIState extends State<WeatherUI> {
   @override
   void initState() {
     super.initState();
-    _fetchLocationAndDispatchEvents();
-  }
-
-  Future<void> _fetchLocationAndDispatchEvents() async {
-    try {
-      final locationService = context.read<LocationService>();
-      final position = await locationService.getLocationLatLog();
-      latitude = position['Latitude'];
-      longitude = position['Longitude'];
-
-      if (mounted) {
-        context
-            .read<WeatherBloc>()
-            .add(FetchAqi(latitude: latitude, longitude: longitude));
-        context
-            .read<WeatherBloc>()
-            .add(FetchCurrentWeather(latitude: latitude, longitude: longitude));
-        context
-            .read<WeatherBloc>()
-            .add(FetchForecast(latitude: latitude, longitude: longitude));
-
-        setState(() {
-          isLocationFetched = true;
-        });
-      }
-    } catch (e) {
-      print("Error fetching location or dispatching events: $e");
-    }
   }
 
   String getGreetingMessage() {
@@ -64,6 +36,22 @@ class _WeatherUIState extends State<WeatherUI> {
     }
   }
 
+  String airQualityDefiner(int index) {
+    if (index == 1) {
+      return "Good";
+    } else if (index == 2) {
+      return "Fair";
+    } else if (index == 3) {
+      return "Moderate";
+    } else if (index == 4) {
+      return "Poor";
+    } else if (index == 5) {
+      return "Very Poor";
+    } else {
+      return "Error";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -72,6 +60,8 @@ class _WeatherUIState extends State<WeatherUI> {
           if (state is WeatherInitial) {
             return Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const CircularProgressIndicator(),
                   const SizedBox(),
@@ -103,6 +93,21 @@ class _WeatherUIState extends State<WeatherUI> {
             );
           }
           if (state is WeatherSuccess) {
+            final weatherMain = state.currentWeatherEntity.weatherMain;
+            final weatherDescription =
+                state.currentWeatherEntity.weatherDescription;
+            final weatherIcon = state.currentWeatherEntity.weatherIcon;
+            final weatherId = state.currentWeatherEntity.weatherID;
+            final weatherTemp = state.currentWeatherEntity.temperature;
+            final weatherHumidity = state.currentWeatherEntity.humidity;
+            final weatherWindSpeed = state.currentWeatherEntity.windSpeed;
+            final weatherPressure = state.currentWeatherEntity.pressure;
+
+            final airQuality = state.aqiEntity.aqiInVal;
+
+            final weatheCelius = kelvinToCelsius(weatherTemp);
+            final weatherFare = kelvinToFahrenheit(weatherTemp);
+
             return Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
@@ -189,7 +194,7 @@ class _WeatherUIState extends State<WeatherUI> {
                             ).createShader(bounds);
                           },
                           child: const Text(
-                            '23°C',
+                            '°C',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 130,
@@ -204,7 +209,7 @@ class _WeatherUIState extends State<WeatherUI> {
                   ),
                   RichText(
                     text: TextSpan(
-                      text: "Weather Description",
+                      text: state.currentWeatherEntity.weatherDescription,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
@@ -231,19 +236,19 @@ class _WeatherUIState extends State<WeatherUI> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               elements(
-                                Icons.air,
-                                state.forecastEntity?.length.toString(),
+                                Icons.wind_power,
+                                weatherWindSpeed.toString(),
                                 "Wind Speed",
                               ),
                               elements(
                                 Icons.air,
-                                "Good",
+                                airQualityDefiner(airQuality),
                                 "Air Quality",
                               ),
                               elements(
-                                Icons.air,
-                                "Good",
-                                "Air Quality",
+                                Icons.water_,
+                                weatherHumidity.toString(),
+                                "Humidity",
                               ),
                             ],
                           ),
@@ -282,6 +287,7 @@ class _WeatherUIState extends State<WeatherUI> {
               ),
             );
           } else {
+            print("Current state printing from Weather_u_i.dart : $state");
             return Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,

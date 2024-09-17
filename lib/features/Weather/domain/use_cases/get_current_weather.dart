@@ -9,6 +9,6 @@ class GetCurrentWeather {
     this.repository,
   );
   Future<Either<ErrorLog, CurrentWeatherEntity>> executeCurrentWeather(double latitude, double longitude) async {
-    return repository.getCurrentWeatherData(latitude, longitude);
+    return await repository.getCurrentWeatherData(latitude, longitude);
   }
 }

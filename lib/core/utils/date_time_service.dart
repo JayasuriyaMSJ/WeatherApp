@@ -1,14 +1,18 @@
+import 'package:intl/intl.dart';
+
 class DateTimeService {
   DateTime now = DateTime.now();
+
   List<String> days = [
-    "Sunday",
     "Monday",
     "Tuesday",
     "Wednesday",
     "Thursday",
     "Friday",
     "Saturday",
+    "Sunday",
   ];
+
   List<String> months = [
     "January",
     "February",
@@ -23,26 +27,31 @@ class DateTimeService {
     "November",
     "December",
   ];
+
   String daTe() {
-    final toDate = now.day.toString();
-    return toDate;
+    return now.day.toString();
   }
 
   String daY() {
-    final toDay = days[now.weekday - 1];
-    return toDay;
+    return days[now.weekday - 1];
   }
 
   String monTh() {
-    final toMonth = months[now.month - 1];
-    return toMonth;
+    return months[now.month - 1];
   }
 
   String formattedDate() {
-    final toDate = now.day.toString();
-    final toDay = days[now.weekday - 1];
-    final toMonth = months[now.month - 1];
-    final value = "$toDate $toMonth, $toDay";
-    return value;
+    return "${daTe()} ${monTh()} ${daY()}";
+  }
+
+  String formattedDateWithOffset(int offsetDays) {
+    final adjustedDate = now.add(Duration(days: offsetDays));
+    final DateFormat format = DateFormat('yyyy-MM-dd');
+    return format.format(adjustedDate);
+  }
+
+  String formattedDayWithOffset(int offsetDays) {
+    final adjustedDate = now.add(Duration(days: offsetDays));
+    return days[adjustedDate.weekday - 1];
   }
 }

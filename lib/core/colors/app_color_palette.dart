@@ -26,8 +26,7 @@ class AppColorPalette {
   static const Color iceColor = Color(0xFFe0f2f7);
 
   static const transperent = Colors.transparent;
-  static const white = Color.fromARGB(255, 221, 216, 216);
-  static const whitebright = Colors.white70;
+  static const white = Color.fromARGB(255, 255, 255, 255);
   static const black = Colors.black;
   static const grey = Colors.grey;
   static const red = Colors.red;

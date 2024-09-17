@@ -17,10 +17,18 @@ class WeatherUI extends StatefulWidget {
 
 class _WeatherUIState extends State<WeatherUI> {
   final LocationService _locationService = LocationService();
+  bool night = false;
 
   @override
   void initState() {
     super.initState();
+    setState(() {
+      if (getGreetingMessage() == "Good Night") {
+        night = true;
+      } else {
+        night = false;
+      }
+    });
   }
 
   // TODO: Need to fetch location from the moblie
@@ -210,11 +218,17 @@ class _WeatherUIState extends State<WeatherUI> {
                           padding:
                               const EdgeInsetsDirectional.fromSTEB(0, 50, 0, 0),
                           child: ClipRect(
-                            child: Image.asset(
-                              getWeatherIcon(weatherId).toString(),
-                              width: 350,
-                              height: 250,
-                            ),
+                            child: night
+                                ? Image.asset(
+                                    "assets/icon/12.png",
+                                    width: 350,
+                                    height: 250,
+                                  )
+                                : Image.asset(
+                                    getWeatherIcon(weatherId).toString(),
+                                    width: 350,
+                                    height: 250,
+                                  ),
                           ),
                         ),
                       ),

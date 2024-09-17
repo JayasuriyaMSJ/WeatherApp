@@ -16,7 +16,9 @@ class _ForeCastChartState extends State<ForeCastChart> {
   @override
   void initState() {
     super.initState();
-    spots = widget.spots; // Initialize the spots from the widget
+    setState(() {
+      spots = List.from(widget.spots)..sort((a, b) => a.x.compareTo(b.x));
+    });
   }
 
   @override
@@ -48,16 +50,20 @@ class _ForeCastChartState extends State<ForeCastChart> {
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 40,
-                      interval: 1,
-                      getTitlesWidget: bottomTitleWidgets,
+                      interval: 1, // Updated interval to match time values
+                      getTitlesWidget: (value, meta) {
+                        return bottomTitleWidgets(value, meta);
+                      },
                     ),
                   ),
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
                       reservedSize: 40,
-                      interval: 5,
-                      getTitlesWidget: leftTitleWidgets,
+                      interval: 5, // Adjust interval based on temperature
+                      getTitlesWidget: (value, meta) {
+                        return leftTitleWidgets(value, meta);
+                      },
                     ),
                   ),
                 ),
@@ -69,8 +75,8 @@ class _ForeCastChartState extends State<ForeCastChart> {
                   ),
                 ),
                 minX: 0,
-                maxX: 8,
-                minY: 0,
+                maxX: 24,
+                minY: 15,
                 maxY: 40,
                 lineBarsData: [
                   LineChartBarData(
@@ -90,25 +96,24 @@ class _ForeCastChartState extends State<ForeCastChart> {
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    final titles = [
-      '0:00 ',
-      '3:00 ',
-      '6:00 ',
-      '9:00 ',
-      '12:00 ',
-      '15:00 ',
-      '18:00 ',
-      '21:00 ',
-      '24:00 '
-    ];
-    // final title = (value.toInt() >= 0 && value.toInt() < titles.length)
-    //     ? titles[value.toInt()]
-    //     : '';
+    final hour = value.toInt();
+    String timeLabel;
+
+    if (hour == 0) {
+      timeLabel = '12 \nAM';
+    } else if (hour < 12) {
+      timeLabel = '$hour \nAM';
+    } else if (hour == 12) {
+      timeLabel = '12 \nPM';
+    } else {
+      timeLabel = '${hour - 12} \nPM';
+    }
+
     return SideTitleWidget(
       axisSide: meta.axisSide,
       child: Text(
-        "${titles[value.toInt()]}\n hrs",
-        style: const TextStyle(fontSize: 16),
+        timeLabel,
+        style: const TextStyle(fontSize: 14),
       ),
     );
   }
@@ -119,7 +124,7 @@ class _ForeCastChartState extends State<ForeCastChart> {
       axisSide: meta.axisSide,
       child: Text(
         "$temperature°",
-        style: const TextStyle(fontSize: 16),
+        style: const TextStyle(fontSize: 14),
       ),
     );
   }

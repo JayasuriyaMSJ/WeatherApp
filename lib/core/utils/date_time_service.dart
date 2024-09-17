@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class DateTimeService {
   DateTime now = DateTime.now();
 
@@ -39,12 +41,13 @@ class DateTimeService {
   }
 
   String formattedDate() {
-    return "${daTe()} ${monTh()}, ${daY()}";
+    return "${daTe()} ${monTh()} ${daY()}";
   }
 
   String formattedDateWithOffset(int offsetDays) {
     final adjustedDate = now.add(Duration(days: offsetDays));
-    return "${adjustedDate.day} ${months[adjustedDate.month - 1]}, ${days[adjustedDate.weekday - 1]}";
+    final DateFormat format = DateFormat('yyyy-MM-dd');
+    return format.format(adjustedDate);
   }
 
   String formattedDayWithOffset(int offsetDays) {

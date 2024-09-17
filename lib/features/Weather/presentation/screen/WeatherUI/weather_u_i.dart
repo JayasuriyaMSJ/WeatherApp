@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intern_weather/core/colors/app_color_palette.dart';
 import 'package:intern_weather/core/utils/LocationService/location_service.dart';
+import 'package:intern_weather/core/utils/design/lottie_anime.dart';
 import 'package:intern_weather/core/utils/kelvin_converter.dart';
 import 'package:intern_weather/core/utils/widget_for_weather/icon_selector.dart';
 import 'package:intern_weather/features/Weather/presentation/bloc/weather_bloc.dart';
@@ -85,17 +86,18 @@ class _WeatherUIState extends State<WeatherUI> {
             );
           }
           if (state is WeatherLoading) {
-            return Center(
+            return const Center(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const CircularProgressIndicator(),
-                  const SizedBox(),
-                  RichText(
-                    text: TextSpan(
-                      text: "Loading........",
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                  ),
+                  LottieAnimation(
+                    fileName: "assets/gif/loading.json",
+                    play: true,
+                    continuousPlay: true,
+                    wid: 300,
+                    hei: 300,
+                  )
                 ],
               ),
             );
@@ -178,29 +180,26 @@ class _WeatherUIState extends State<WeatherUI> {
                     children: [
                       Align(
                         alignment: const AlignmentDirectional(0, 0),
-                        child: Card(
-                          color: AppColorPalette.grey.withOpacity(0.2),
-                          child: ShaderMask(
-                            shaderCallback: (Rect bounds) {
-                              return const LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  // AppColorPalette.white,
-                                  AppColorPalette.cyan,
-                                  AppColorPalette.white,
-                                ],
-                              ).createShader(bounds);
-                            },
-                            child: Text(
-                              '${valueFormatter(weatheCelius).toString()}°C',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 130,
-                                fontWeight: FontWeight.bold,
-                                color: Colors
-                                    .white, // Color is required but won't be used due to ShaderMask
-                              ),
+                        child: ShaderMask(
+                          shaderCallback: (Rect bounds) {
+                            return const LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                // AppColorPalette.white,
+                                AppColorPalette.cyan,
+                                AppColorPalette.white,
+                              ],
+                            ).createShader(bounds);
+                          },
+                          child: Text(
+                            '${valueFormatter(weatheCelius).toString()}°C',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 130,
+                              fontWeight: FontWeight.bold,
+                              color: Colors
+                                  .white, // Color is required but won't be used due to ShaderMask
                             ),
                           ),
                         ),

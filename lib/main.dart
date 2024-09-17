@@ -32,7 +32,8 @@ Future<void> main() async {
   );
 
   final WeatherRepositoryImpl weatherRepository = WeatherRepositoryImpl(
-    weatherAPI: weatherApiServices,);
+    weatherAPI: weatherApiServices,
+  );
 
   final GetAqi getAqiUseCase = GetAqi(
     weatherRepository,
@@ -98,25 +99,24 @@ class MyApp extends StatelessWidget {
                       getCurrentWeatherUseCase: getCurrentWeather,
                       getForecastUseCase: getForecast,
                     )
-                    ..add(
-                      FetchAqi(
-                        latitude: latitude,
-                        longitude: longitude,
+                      ..add(
+                        FetchAqi(
+                          latitude: latitude,
+                          longitude: longitude,
+                        ),
+                      )
+                      ..add(
+                        FetchCurrentWeather(
+                          latitude: latitude,
+                          longitude: longitude,
+                        ),
+                      )
+                      ..add(
+                        FetchForecast(
+                          latitude: latitude,
+                          longitude: longitude,
+                        ),
                       ),
-                    )
-                    ..add(
-                      FetchCurrentWeather(
-                        latitude: latitude,
-                        longitude: longitude,
-                      ),
-                    )
-                    ..add(
-                      FetchForecast(
-                        latitude: latitude,
-                        longitude: longitude,
-                      ),
-                    )
-                    ,
                     child: const AppNavigationBar(),
                     //  userIsLoggedIn == true
                     //     ? const WeatherPage()
@@ -127,6 +127,8 @@ class MyApp extends StatelessWidget {
                     body: SafeArea(
                       child: Center(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center ,
                           children: [
                             const CircularProgressIndicator(),
                             const SizedBox(

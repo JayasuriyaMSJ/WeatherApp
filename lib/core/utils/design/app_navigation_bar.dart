@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intern_weather/core/utils/design/lottie_anime.dart';
 import 'package:intern_weather/features/Weather/presentation/screen/Explorer_page/explore_forecast.dart';
+import 'package:intern_weather/features/Weather/presentation/screen/Search/search_u_i.dart';
 import 'package:intern_weather/features/Weather/presentation/screen/WeatherUI/weather_u_i.dart';
 
 class AppNavigationBar extends StatefulWidget {
@@ -12,10 +14,11 @@ class AppNavigationBar extends StatefulWidget {
 class _AppNavigationBarState extends State<AppNavigationBar> {
   int _selectedIndex = 0;
 
+  // Lazy-loaded page views
   final List<Widget> _pages = [
     const WeatherUI(),
     const ExploreForecast(),
-    const SearchPage(),
+    const SearchUI(),
     const UserAccountPage(),
   ];
 
@@ -29,10 +32,7 @@ class _AppNavigationBarState extends State<AppNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex, // Maintain the state of each page
-        children: _pages,
-      ),
+      body: _buildPage(_selectedIndex),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Container(
@@ -85,39 +85,21 @@ class _AppNavigationBarState extends State<AppNavigationBar> {
       ),
     );
   }
-}
 
-// Dummy pages for each tab
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Home Page'),
-    );
-  }
-}
-
-class ExplorePage extends StatelessWidget {
-  const ExplorePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Explore Page'),
-    );
-  }
-}
-
-class SearchPage extends StatelessWidget {
-  const SearchPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Search Page'),
-    );
+  // Build the selected page
+  Widget _buildPage(int index) {
+    switch (index) {
+      case 0:
+        return const WeatherUI();
+      case 1:
+        return const ExploreForecast();
+      case 2:
+        return const SearchUI();
+      case 3:
+        return const UserAccountPage();
+      default:
+        return const WeatherUI();
+    }
   }
 }
 
@@ -126,8 +108,28 @@ class UserAccountPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('User Account Page'),
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const LottieAnimation(
+              fileName: "assets/gif/Animation - 1726585746003.json",
+              play: true,
+              continuousPlay: true,
+              wid: 300,
+              hei: 300),
+          const SizedBox(
+            height: 50,
+          ),
+          RichText(
+            text: TextSpan(
+              text: "Under Construction\n  We be Back Soon",
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
